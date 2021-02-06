@@ -47,8 +47,8 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        # elif event.type == pygame.KEYDOWN:
-        #     mapapp.update(event)
+         elif event.type == pygame.KEYDOWN:
+             mapapp.update(event)
 
     screen.blit(mapapp.map, (0, 0))
     pygame.display.flip()
