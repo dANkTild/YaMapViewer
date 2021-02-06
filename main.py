@@ -3,6 +3,7 @@ import requests
 from io import BytesIO
 
 url_static = 'https://static-maps.yandex.ru/1.x/'
+KEYS = (pygame.K_PAGEDOWN, pygame.K_PAGEUP, pygame.K_UP, pygame.K_DOWN)
 
 
 class Map:
@@ -22,8 +23,16 @@ class Map:
 
         response = requests.get(url_static, params)
         if not response:
-            raise RuntimeError('Ошибка запроса')
+            raise RuntimeError('Ошибка запроса:\n' + response.url)
         self.map = pygame.image.load(BytesIO(response.content))
+
+    def update(self, event):
+        if event.key == pygame.K_PAGEDOWN:
+            self.z = max(0, self.z - 1)
+        elif event.key == pygame.K_PAGEUP:
+            self.z = min(20, self.z + 1)
+        if event.key in KEYS:
+            self.update_map()
 
 
 # if __name__ == '__main__':
@@ -40,6 +49,8 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if event.type == pygame.KEYDOWN:
+            mapapp.update(event)
     screen.blit(mapapp.map, (0, 0))
     pygame.display.flip()
 
