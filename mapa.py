@@ -6,7 +6,8 @@ import io
 size = WIDTH, HEIGHT = 650, 450
 
 KEYS = (pygame.K_PAGEDOWN, pygame.K_PAGEUP, pygame.K_DOWN,
-        pygame.K_UP, pygame.K_LEFT, pygame.K_RIGHT)
+        pygame.K_UP, pygame.K_LEFT, pygame.K_RIGHT,
+        pygame.K_m, pygame.K_s, pygame.K_h)
 lon_delta = 300
 lat_delta = 100
 
@@ -34,6 +35,12 @@ class Map:
             self.lat = min(self.lat + lat_delta * 2 ** -self.z, 85)
         if event.key == pygame.K_DOWN:
             self.lat = max(self.lat - lat_delta * 2 ** -self.z, -85)
+        if event.key == pygame.K_m:
+            self.layer = "map"
+        if event.key == pygame.K_s:
+            self.layer = "sat"
+        if event.key == pygame.K_h:
+            self.layer = "sat,skl"
 
         if event.key in KEYS:
             self.update_map()
@@ -47,7 +54,10 @@ class Map:
         response = requests.get(url_static, params)
         if not response:
             raise RuntimeError("Ошибка выполнения запроса")
-        self.map = pygame.image.load(io.BytesIO(response.content))
+        filename = "temp.img"
+        with open(filename, "wb") as file:
+            file.write(response.content)
+        self.map = pygame.image.load(filename)
 
 
 pygame.init()
@@ -55,7 +65,7 @@ screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
 
 coords = map(float, "55.156384, 60.151121".split(", ")[::-1])
-z = 0
+z = 15
 
 mapapp = Map(coords, z)
 
