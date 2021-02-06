@@ -1,10 +1,15 @@
 import pygame
+import pygame_gui
 import requests
 import io
 
 size = WIDTH, HEIGHT = 650, 450
+
 KEYS = (pygame.K_PAGEDOWN, pygame.K_PAGEUP, pygame.K_DOWN,
         pygame.K_UP, pygame.K_LEFT, pygame.K_RIGHT)
+lon_delta = 300
+lat_delta = 100
+
 url_static = "http://static-maps.yandex.ru/1.x/"
 
 
@@ -21,6 +26,15 @@ class Map:
             self.z = max(0, self.z - 1)
         if event.key == pygame.K_PAGEUP:
             self.z = min(17, self.z + 1)
+        if event.key == pygame.K_LEFT:
+            self.lon = (self.lon + 180 - lon_delta * 2 ** -self.z) % 360 - 180
+        if event.key == pygame.K_RIGHT:
+            self.lon = ((self.lon + 180 + lon_delta * 2 ** -self.z) % 360 - 180)
+        if event.key == pygame.K_UP:
+            self.lat = min(self.lat + lat_delta * 2 ** -self.z, 85)
+        if event.key == pygame.K_DOWN:
+            self.lat = max(self.lat - lat_delta * 2 ** -self.z, -85)
+
         if event.key in KEYS:
             self.update_map()
 
@@ -40,8 +54,8 @@ pygame.init()
 screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
 
-coords = "55.156384, 60.151121".split(", ")[::-1]
-z = 17
+coords = map(float, "55.156384, 60.151121".split(", ")[::-1])
+z = 0
 
 mapapp = Map(coords, z)
 
