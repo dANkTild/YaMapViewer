@@ -3,7 +3,10 @@ import requests
 from io import BytesIO
 
 url_static = 'https://static-maps.yandex.ru/1.x/'
-KEYS = (pygame.K_PAGEDOWN, pygame.K_PAGEUP, pygame.K_UP, pygame.K_DOWN)
+KEYS = (pygame.K_PAGEDOWN, pygame.K_PAGEUP, pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT)
+# lon_d = 0.001
+lon_d = 320
+lat_d = 100
 
 
 class Map:
@@ -31,6 +34,17 @@ class Map:
             self.z = max(0, self.z - 1)
         elif event.key == pygame.K_PAGEUP:
             self.z = min(20, self.z + 1)
+
+        elif event.key == pygame.K_LEFT:
+            self.lon = ((self.lon + 180 - lon_d * 2 ** -(self.z)) % 360 - 180)
+        elif event.key == pygame.K_RIGHT:
+            self.lon = ((self.lon + 180 + lon_d * 2 ** -(self.z)) % 360 - 180)
+
+        elif event.key == pygame.K_UP:
+            self.lat = min(self.lat + lat_d * 2 ** -(self.z), 85)
+        elif event.key == pygame.K_DOWN:
+            self.lat = max(self.lat - lat_d * 2 ** -(self.z), -85)
+
         if event.key in KEYS:
             self.update_map()
 
@@ -40,8 +54,8 @@ pygame.init()
 w, h = size = (650, 450)
 screen = pygame.display.set_mode(size)
 
-coord = '60.153218,55.156414'.split(',')
-z = 17
+coord = (60.153218, 55.156414)
+z = 0
 mapapp = Map(coord, z)
 
 running = True
