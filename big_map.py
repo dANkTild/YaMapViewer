@@ -27,13 +27,13 @@ class Map:
             raise RuntimeError('Ошибка выполнения запроса')
         self.map = pygame.image.load(BytesIO(response.content))
 
-    def update(self, event):
-        if event.key == pygame.K_PAGEDOWN:
-            self.z = max(0, self.z - 1)
-        elif event.key == pygame.K_PAGEUP:
-            self.z = min(20, self.z + 1)
-        if event.key in KEYS:
-            self.update_map()
+    # def update(self, event):
+    #     if event.key == pygame.K_PAGEDOWN:
+    #         self.z = max(0, self.z - 1)
+    #     elif event.key == pygame.K_PAGEUP:
+    #         self.z = min(20, self.z + 1)
+    #     if event.key in KEYS:
+    #         self.update_map()
 
 
 pygame.init()
@@ -47,8 +47,8 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        elif event.type == pygame.KEYDOWN:
-            mapapp.update(event)
+        # elif event.type == pygame.KEYDOWN:
+        #     mapapp.update(event)
 
     screen.blit(mapapp.map, (0, 0))
     pygame.display.flip()
