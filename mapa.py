@@ -51,21 +51,27 @@ class Map:
         self.point = None
         self.update_map()
 
-    def update(self, event):
-        if event.key == pygame.K_PAGEDOWN:
-            self.z = max(0, self.z - 1)
-        if event.key == pygame.K_PAGEUP:
-            self.z = min(17, self.z + 1)
-        if event.key == pygame.K_LEFT:
-            self.lon = (self.lon + 180 - lon_delta * 2 ** -self.z) % 360 - 180
-        if event.key == pygame.K_RIGHT:
-            self.lon = ((self.lon + 180 + lon_delta * 2 ** -self.z) % 360 - 180)
-        if event.key == pygame.K_UP:
-            self.lat = min(self.lat + lat_delta * 2 ** -self.z, 85)
-        if event.key == pygame.K_DOWN:
-            self.lat = max(self.lat - lat_delta * 2 ** -self.z, -85)
+        self.place = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((0, 0), (200, 20)),
+                                                         manager=manager)
+        self.reset_btn = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((205, 0), (29, 29)),
+                                                      text="X",
+                                                      manager=manager)
 
-        if not place.is_focused:
+    def update(self, event):
+        if not self.place.is_focused:
+            if event.key == pygame.K_PAGEDOWN:
+                self.z = max(0, self.z - 1)
+            if event.key == pygame.K_PAGEUP:
+                self.z = min(17, self.z + 1)
+            if event.key == pygame.K_LEFT:
+                self.lon = (self.lon + 180 - lon_delta * 2 ** -self.z) % 360 - 180
+            if event.key == pygame.K_RIGHT:
+                self.lon = ((self.lon + 180 + lon_delta * 2 ** -self.z) % 360 - 180)
+            if event.key == pygame.K_UP:
+                self.lat = min(self.lat + lat_delta * 2 ** -self.z, 85)
+            if event.key == pygame.K_DOWN:
+                self.lat = max(self.lat - lat_delta * 2 ** -self.z, -85)
+
             if event.key == pygame.K_m:
                 self.layer = "map"
             if event.key == pygame.K_s:
@@ -80,7 +86,12 @@ class Map:
             self.update_map()
 
     def search(self):
-        self.point = self.lon, self.lat = get_coord(place.get_text())
+        self.point = self.lon, self.lat = get_coord(self.place.get_text())
+
+    def buttons_update(self, btn):
+        if btn == self.reset_btn:
+            self.point = None
+            self.update_map()
 
     def update_map(self):
         params = {"l": self.layer,
@@ -105,9 +116,6 @@ clock = pygame.time.Clock()
 
 manager = pygame_gui.UIManager(size)
 
-place = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((0, 0), (200, 20)),
-                                            manager=manager)
-
 coords = map(float, "55.156384, 60.151121".split(", ")[::-1])
 z = 15
 
@@ -122,9 +130,12 @@ while running:
             running = False
         if event.type == pygame.KEYDOWN:
             mapapp.update(event)
-
+        if event.type == pygame.USEREVENT:
+            if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                mapapp.buttons_update(event.ui_element)
 
         manager.process_events(event)
+        pygame.event.clear(event.type)
 
     manager.update(time_delta)
 
