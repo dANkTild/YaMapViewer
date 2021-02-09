@@ -1,11 +1,9 @@
-from io import BytesIO
 import os
 import pygame
-import pygame_gui
+#import pygame_gui
 import requests
-from PIL import Image
 
-KEYS = (pygame.KEYDOWN, pygame.K_PAGEUP, pygame.K_UP, pygame.K_DOWN,
+KEYS = (pygame.K_PAGEDOWN, pygame.K_PAGEUP, pygame.K_UP, pygame.K_DOWN,
         pygame.K_LEFT, pygame.K_RIGHT, pygame.K_h, pygame.K_m, pygame.K_s)
 url_static = 'http://static-maps.yandex.ru/1.x/'
 w, h = size = 650, 450
