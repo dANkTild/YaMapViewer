@@ -48,6 +48,7 @@ class Map:
         self.z = zoom
         self.layer = layer
         self.size = size
+        self.point = None
         self.update_map()
 
     def update(self, event):
@@ -79,14 +80,15 @@ class Map:
             self.update_map()
 
     def search(self):
-        self.lon, self.lat = get_coord(place.get_text())
+        self.point = self.lon, self.lat = get_coord(place.get_text())
 
     def update_map(self):
         params = {"l": self.layer,
                   "ll": f"{self.lon},{self.lat}",
                   "z": self.z,
-                  "size": "{},{}".format(*self.size),
-                  "pt": f"{self.lon},{self.lat},pm2rdm"}
+                  "size": "{},{}".format(*self.size)}
+        if self.point:
+            params["pt"] = f"{self.point[0]},{self.point[1]},pm2rdm"
 
         response = requests.get(url_static, params)
         if not response:
