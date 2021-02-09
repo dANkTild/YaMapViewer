@@ -109,6 +109,9 @@ intput_box = pygame_gui
 manager = pygame_gui.UIManager((w, h))
 text_input = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((0,
                                                                             0), (100, 40)), manager=manager)
+reset_address_button = pygame_gui.elements.UIButton(relative_rect=pygame.Rect((100, 0), (200, 40)),
+                                                    text='Сбросить результат поиска',
+                                                    manager=manager)
 coord = (60.153218, 55.156414)
 mapapp = Map(coord, z)
 running = True
@@ -129,7 +132,10 @@ while running:
                     mapapp.lon = float(coord[0])
                     mapapp.lat = float(coord[1])
                     mapapp.ll = '{},{}'.format(mapapp.lon, mapapp.lat)
-                    mapapp.update(event)
+            if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                if event.ui_element == reset_address_button:
+                    mapapp.ll = None
+            mapapp.update(event)
         manager.process_events(event)
     manager.update(time_delta)
 
